@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banking UI</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .bank-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        max-width: 350px;
+        width: 100%;
+        text-align: center;
+    }
+    h2 {
+        color: #333;
+    }
+    .balance {
+        font-size: 24px;
+        margin: 15px 0;
+        color: #007bff;
+    }
+    input {
+        width: 90%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    button {
+        width: 45%;
+        padding: 10px;
+        font-size: 16px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+    }
+    .deposit {
+        background: #28a745;
+    }
+    .withdraw {
+        background: #dc3545;
+    }
+    button:hover {
+        opacity: 0.9;
+    }
+    @media (max-width: 500px) {
+        .bank-container {
+            padding: 15px;
+        }
+        input, button {
+            font-size: 14px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="bank-container">
+    <h2>My Bank Account</h2>
+    <div class="balance">Balance: ₹<span id="balance">0</span></div>
+    <input type="number" id="amount" placeholder="Enter amount" min="1">
+    <div>
+        <button class="deposit" onclick="deposit()">Deposit</button>
+        <button class="withdraw" onclick="withdraw()">Withdraw</button>
+    </div>
+</div>
+
+<script>
+    let balance = 0;
+
+    function deposit() {
+        let amount = parseFloat(document.getElementById("amount").value);
+        if (amount > 0) {
+            balance += amount;
+            updateBalance();
+        } else {
+            alert("Enter a valid amount to deposit.");
+        }
+    }
+
+    function withdraw() {
+        let amount = parseFloat(document.getElementById("amount").value);
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            updateBalance();
+        } else if (amount > balance) {
+            alert("Insufficient balance.");
+        } else {
+            alert("Enter a valid amount to withdraw.");
+        }
+    }
+
+    function updateBalance() {
+        document.getElementById("balance").innerText = balance.toFixed(2);
+        document.getElementById("amount").value = "";
+    }
+</script>
+
+</body>
+</html>
