@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interactive SVG Drawing Tool</title>
+<style>
+  body { margin:0; font-family:Arial,sans-serif; background:#f0f0f0; }
+  #toolbar { padding:10px; background:#333; color:#fff; display:flex; gap:10px; }
+  button { padding:6px 12px; cursor:pointer; }
+  svg { border:1px solid #333; display:block; margin:10px auto; background:#fff; }
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <button data-tool="pen">Pen</button>
+  <button data-tool="line">Line</button>
+  <button data-tool="rect">Rect</button>
+  <button data-tool="ellipse">Ellipse</button>
+  <label>Stroke: <input type="color" id="strokeColor" value="#000000"></label>
+  <label>Width: <input type="number" id="strokeWidth" value="2" min="1" max="10" style="width:50px"></label>
+  <button id="clear">Clear</button>
+</div>
+
+<svg id="canvas" width="800" height="500"></svg>
+
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+const canvas = document.getElementById('canvas');
+let tool = 'pen';
+let drawing = null;
+let start = null;
+
+const strokeColor = document.getElementById('strokeColor');
+const strokeWidth = document.getElementById('strokeWidth');
+
+// Tool buttons
+document.querySelectorAll('[data-tool]').forEach(btn => {
+  btn.addEventListener('click', () => tool = btn.dataset.tool);
+});
+
+// Clear canvas
+document.getElementById('clear').addEventListener('click', () => canvas.innerHTML = '');
+
+// Mouse events
+canvas.addEventListener('mousedown', e => {
+  const pt = getPoint(e);
+  start = pt;
+
+  if (tool === 'pen') {
+    drawing = document.createElementNS(svgNS,'path');
+    drawing.setAttribute('d', `M ${pt.x} ${pt.y}`);
+    drawing.setAttribute('stroke', strokeColor.value);
+    drawing.setAttribute('stroke-width', strokeWidth.value);
+    drawing.setAttribute('fill','none');
+    canvas.appendChild(drawing);
+  } else if (tool === 'line') {
+    drawing = document.createElementNS(svgNS,'line');
+    drawing.setAttribute('x1', pt.x);
+    drawing.setAttribute('y1', pt.y);
+    drawing.setAttribute('x2', pt.x);
+    drawing.setAttribute('y2', pt.y);
+    drawing.setAttribute('stroke', strokeColor.value);
+    drawing.setAttribute('stroke-width', strokeWidth.value);
+    canvas.appendChild(drawing);
+  } else if (tool === 'rect') {
+    drawing = document.createElementNS(svgNS,'rect');
+    drawing.setAttribute('x', pt.x);
+    drawing.setAttribute('y', pt.y);
+    drawing.setAttribute('width',0);
+    drawing.setAttribute('height',0);
+    drawing.setAttribute('stroke', strokeColor.value);
+    drawing.setAttribute('stroke-width', strokeWidth.value);
+    drawing.setAttribute('fill','none');
+    canvas.appendChild(drawing);
+  } else if (tool === 'ellipse') {
+    drawing = document.createElementNS(svgNS,'ellipse');
+    drawing.setAttribute('cx', pt.x);
+    drawing.setAttribute('cy', pt.y);
+    drawing.setAttribute('rx',0);
+    drawing.setAttribute('ry',0);
+    drawing.setAttribute('stroke', strokeColor.value);
+    drawing.setAttribute('stroke-width', strokeWidth.value);
+    drawing.setAttribute('fill','none');
+    canvas.appendChild(drawing);
+  }
+});
+
+canvas.addEventListener('mousemove', e => {
+  if (!drawing) return;
+  const pt = getPoint(e);
+
+  if (tool === 'pen') {
+    const d = drawing.getAttribute('d');
+    drawing.setAttribute('d', d + ` L ${pt.x} ${pt.y}`);
+  } else if (tool === 'line') {
+    drawing.setAttribute('x2', pt.x);
+    drawing.setAttribute('y2', pt.y);
+  } else if (tool === 'rect') {
+    const x = Math.min(start.x, pt.x);
+    const y = Math.min(start.y, pt.y);
+    const w = Math.abs(pt.x - start.x);
+    const h = Math.abs(pt.y - start.y);
+    drawing.setAttribute('x', x);
+    drawing.setAttribute('y', y);
+    drawing.setAttribute('width', w);
+    drawing.setAttribute('height', h);
+  } else if (tool === 'ellipse') {
+    const rx = Math.abs(pt.x - start.x)/2;
+    const ry = Math.abs(pt.y - start.y)/2;
+    drawing.setAttribute('rx', rx);
+    drawing.setAttribute('ry', ry);
+    drawing.setAttribute('cx', (pt.x + start.x)/2);
+    drawing.setAttribute('cy', (pt.y + start.y)/2);
+  }
+});
+
+canvas.addEventListener('mouseup', e => {
+  drawing = null;
+  start = null;
+});
+
+function getPoint(e) {
+  const rect = canvas.getBoundingClientRect();
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
+</script>
+
+</body>
+</html>

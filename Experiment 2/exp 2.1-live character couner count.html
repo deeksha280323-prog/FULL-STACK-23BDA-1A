@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Live Character Counter</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+    }
+    textarea {
+        width: 400px;
+        height: 120px;
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 6px;
+        resize: none;
+        outline: none;
+        transition: border-color 0.2s ease;
+    }
+    textarea:focus {
+        border-color: #4A90E2;
+    }
+    .counter {
+        margin-top: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #555;
+        transition: color 0.2s ease;
+    }
+    .warning {
+        color: #E74C3C;
+    }
+</style>
+</head>
+<body>
+
+<h2>Live Character Counter</h2>
+<textarea id="textInput" maxlength="200" placeholder="Type something..."></textarea>
+<div id="charCount" class="counter">0 / 200</div>
+
+<script>
+    const textarea = document.getElementById('textInput');
+    const counter = document.getElementById('charCount');
+    const maxLength = textarea.getAttribute('maxlength');
+
+    textarea.addEventListener('input', () => {
+        const length = textarea.value.length;
+        counter.textContent = `${length} / ${maxLength}`;
+        
+        // Change color if close to the limit
+        if (length > maxLength - 20) {
+            counter.classList.add('warning');
+        } else {
+            counter.classList.remove('warning');
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dynamic Product Filter</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  .controls { margin-bottom: 20px; }
+  select { padding: 6px 10px; font-size: 14px; }
+  .products { display: flex; flex-wrap: wrap; gap: 15px; }
+  .product { background: #fff; padding: 15px; border-radius: 8px; width: 180px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  .product h3 { margin: 10px 0; }
+  .price { color: #27ae60; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h2>Dynamic Product Filter</h2>
+
+<div class="controls">
+  <label for="sort">Sort By: </label>
+  <select id="sort">
+    <option value="">-- Select --</option>
+    <option value="priceLowHigh">Price: Low to High</option>
+    <option value="priceHighLow">Price: High to Low</option>
+    <option value="nameAZ">Name: A to Z</option>
+    <option value="nameZA">Name: Z to A</option>
+  </select>
+</div>
+
+<div class="products" id="productList">
+  <div class="product" data-name="Laptop" data-price="900">
+    <h3>Laptop</h3>
+    <div class="price">$900</div>
+  </div>
+  <div class="product" data-name="Headphones" data-price="150">
+    <h3>Headphones</h3>
+    <div class="price">$150</div>
+  </div>
+  <div class="product" data-name="Smartphone" data-price="600">
+    <h3>Smartphone</h3>
+    <div class="price">$600</div>
+  </div>
+  <div class="product" data-name="Camera" data-price="450">
+    <h3>Camera</h3>
+    <div class="price">$450</div>
+  </div>
+</div>
+
+<script>
+const sortSelect = document.getElementById('sort');
+const productList = document.getElementById('productList');
+const products = Array.from(productList.children);
+
+sortSelect.addEventListener('change', () => {
+  let sorted = [...products];
+  const value = sortSelect.value;
+
+  if(value === "priceLowHigh") sorted.sort((a,b) => a.dataset.price - b.dataset.price);
+  else if(value === "priceHighLow") sorted.sort((a,b) => b.dataset.price - a.dataset.price);
+  else if(value === "nameAZ") sorted.sort((a,b) => a.dataset.name.localeCompare(b.dataset.name));
+  else if(value === "nameZA") sorted.sort((a,b) => b.dataset.name.localeCompare(a.dataset.name));
+
+  productList.innerHTML = "";
+  sorted.forEach(p => productList.appendChild(p));
+});
+</script>
+
+</body>
+</html>
